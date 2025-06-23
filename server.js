@@ -6,7 +6,7 @@ const AssemblyAIWebSocket = require('ws');
 const { AssemblyAI } = require('assemblyai');
 
 const apiKey = process.env.ASSEMBLY_AI_API_KEY;
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 
 
 app.set('port', PORT);
