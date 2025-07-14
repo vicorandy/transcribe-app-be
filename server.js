@@ -6,7 +6,7 @@ const AssemblyAIWebSocket = require('ws');
 const { AssemblyAI } = require('assemblyai');
 
 const apiKey = process.env.ASSEMBLY_AI_API_KEY;
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 
 
 app.set('port', PORT);
@@ -80,7 +80,7 @@ wss.on('connection', async (ws) => {
 async function start() {
   try {
     await dbConnectionTest();
-    server.listen(PORT, () => {
+    server.listen(PORT,'0.0.0.0', () => {
       console.log(`Server is listening on port ${PORT}...`);
     });
   } catch (error) {
