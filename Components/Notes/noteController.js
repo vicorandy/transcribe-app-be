@@ -26,7 +26,6 @@ async function editNote(req,res) {
     const {userid:userId} = req.user
     
     const{name,participant,objective,transcriptionSummary,transcript,clientInstruction,assementAndPlan, } = req.body
-    console.log({name,participant,objective,transcriptionSummary,transcript,clientInstruction,assementAndPlan})
 
 
     if(!id){
@@ -36,14 +35,13 @@ async function editNote(req,res) {
     }
 
     const note = await Notes.findOne({where:{id}})
-    const transcibe = await Transcribes.findOne({where:{id:note.transcribeId}})
-    console.log(note)
-
-    if(!note){
+        if(!note){
         res.status(404)
         res.json({message:'Sorry we could not find your note'})
         return
     }
+
+    const transcibe = await Transcribes.findOne({where:{id:note.transcribeId}})
 
     if(note.userId !== userId){
         res.status(409)

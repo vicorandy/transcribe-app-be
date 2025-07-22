@@ -1,10 +1,9 @@
 const Stripe = require('./stripeModel');
 const stripe = require('stripe')(process.env.STRIPE_SECRETE_KEY)
-const {basic,pro} =process.env
+const {basic,pro,baseurl,frontendurl} =process.env
 
 async function createUserSubscription(req,res){
     try {   
-        console.log('running')    
         const {plan} = req.body
         const {userid:userId} = req.user
 
@@ -32,8 +31,8 @@ async function createUserSubscription(req,res){
                 price : priceId,
                 quantity : 1
              }],
-             success_url : `http://localhost:5000/api/v1/stripe/success/?session_id={CHECKOUT_SESSION_ID}&userId=${userId}&planType=${plan}`,
-             cancel_url : 'http://localhost:3000/cancel'
+             success_url : `${baseurl}/api/v1/stripe/success/?session_id={CHECKOUT_SESSION_ID}&userId=${userId}&planType=${plan}`,
+             cancel_url : `${frontendurl}/cancel`
             })
             res.status(200)
             res.json({ url: session.url })
