@@ -27,7 +27,6 @@ transcribeRouter
   .route('/transcribe-audio')
   .post(upload.single('file'), authorization, hasSubscription, transcibeAudio);
  
- 
  transcribeRouter.route('/transcribe-uploaded-audio-link').post(upload.single('file'),authorization,hasSubscription,transcibeUploadedAudioandLink)
  
 
