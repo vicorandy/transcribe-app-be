@@ -7,6 +7,10 @@ async function createUserSubscription(req,res){
         const {plan} = req.body
         const {userid:userId} = req.user
 
+        if(plan.toLowerCase() !== 'pro' && plan.toLowerCase() !== 'basic'){
+            return res.status(400).json({message:'please  enter a valid plan'})
+        }
+
         const userStripeDetails = await Stripe.findOne({where:{userId}})
     
         
@@ -44,13 +48,10 @@ async function createUserSubscription(req,res){
 
 
 async function onSubscriptionSuccess(req,res){
-    const{session_id,planType,userId} = req.query
+   const{session_id,planType,userId} = req.query
    const session = await stripe.checkout.sessions.retrieve(session_id)
    const customer = await stripe.customers.retrieve(session.customer);
    const subscription = await stripe.subscriptions.retrieve(session.subscription)
-   
-   console.log('THIS IS THE DATA YOU NEED ')
-   console.log({customer,subscription})
 
    const userStripeDetails = await Stripe.create({
       userId,
@@ -58,12 +59,12 @@ async function onSubscriptionSuccess(req,res){
       customerId : session.customer,
       subscriptionId :session.subscription,
    })
-//    console.log(userStripeDetails)
-   res.redirect('http://localhost:3000/dashboard')
+   res.redirect(`${frontendurl}/dashboard`)
 //    console.log(session)
 }
 
 async function upgradeSubscription(req,res){
+    try{
     const {userid:userId} = req.user
     const {plan} = req.body
     const userStripeDetails = await Stripe.findOne({where:{userId}})
@@ -106,6 +107,10 @@ async function upgradeSubscription(req,res){
 
     res.status(200)
     res.json({message:'success'})
+}catch(error){
+    console.log(error)
+    res.status(500).json({message:'Internal server Error'})
+}
 }
 
 
