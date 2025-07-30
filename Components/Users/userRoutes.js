@@ -1,16 +1,14 @@
 const express = require('express');
 const  {authorization,hasSubscription} = require('../../MiddelWare/auth')
 const {
-  signUp,
-  signIn,
-  getUserInfo
+  getUserInfo,
+  ssoCreateUser,
 
 } = require('./userController');
 
 const userRouter = express.Router();
 
-userRouter.route('/signup').post(signUp);
-userRouter.route('/signin').post(signIn);
+userRouter.route('/sso-create-transcribe-user').post(ssoCreateUser);
 userRouter.route('/get-user-info').get(authorization,hasSubscription,getUserInfo)
 
 

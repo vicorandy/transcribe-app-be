@@ -8,6 +8,57 @@ const {
 const User = require('./userModel');
 
 // FOR CREATING A USER ACCOUNT
+
+
+async function ssoCreateUser(req,res) {
+
+  const {id,firstName,lastName,email} = req.body;
+  
+  const isEmailCorrect = emailValidator(email);
+
+  if(!id || !firstName || !lastName || !email) {
+    return res.status(400).json({
+      message:'please provide all required fields',
+      stausCode: 400
+    })
+  }
+
+  if (!isEmailCorrect) {
+      res.status(400);
+      res.json({
+        message: 'the email you entered appers to be missing the @ symbol',
+        stausCode: 400,
+      });
+      return;
+  }
+
+  const user = await User.findOne({ where: { email } });
+  if (user) {
+    res.status(409);
+    res.json({
+      message: 'This email address has already been registered to an account.',
+      stausCode: 409,
+    });
+    return;
+  }
+
+   const newUser = await User.create({
+    id,
+    firstName,
+    lastName,
+    email,
+  });
+
+  res.status(201).json({
+    message: 'User account created successfully on the transcription service',
+    stausCode: 201,
+  });
+  
+  
+}
+
+
+
 async function signUp(req, res) {
   try {
     const { firstName, lastName, email, password, transcriptionUse,dob } = req.body;
@@ -148,5 +199,6 @@ async function getUserInfo(req,res) {
 module.exports={
   signUp,
   signIn,
-  getUserInfo
+  getUserInfo,
+  ssoCreateUser
 }

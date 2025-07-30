@@ -1,9 +1,12 @@
-const jwt = require('jsonwebtoken');
 const Stripe = require('../Components/Stripe/stripeModel')
 const stripe = require('stripe')(process.env.STRIPE_SECRETE_KEY)
 const Users = require('../Components/Users/userModel')
 
 
+const { jwtVerify, createRemoteJWKSet } =require('jose');
+
+const JWKS = createRemoteJWKSet(new URL('https://auth.deskmayte.com/auth/public-key'));
+ 
 // AUTHORIZING USERS
 async function authorization(req, res, next) {
   try {
@@ -17,12 +20,12 @@ async function authorization(req, res, next) {
     }
     const token = authHeader.split(' ')[1];
     //  verifying user token
-    const payLoad = jwt.verify(token, process.env.JWT_SECRETE);
-    const { userid, username } = payLoad;
-    const user = { userid, username };
+      const { payload } = await jwtVerify(token, JWKS, {
+      issuer: 'https://auth.deskmayete.com/',
+    });
 
-    // creating user object
-    req.user = user;
+   
+    req.user = payload
     next();
   } catch (error) {
     if (error.name === 'JsonWebTokenError') {
@@ -62,7 +65,6 @@ async function hasSubscription(req, res, next) {
       // ✅ Current active plan
       const currentPlanId = subscription.items.data[0].price.id;
       let plan = currentPlanId === basic ? "basic" : currentPlanId === pro ? "pro" : "unknown";
-      console.log(plan)
 
       // ✅ Check for pending downgrade
       console.log({subscription})
